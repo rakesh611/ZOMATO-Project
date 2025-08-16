@@ -1,0 +1,154 @@
+Deployment of ZOMATO Project
+Repo URL: https://github.com/rakesh611/ZOMATO-Project
+Install Jenkins on Centos 9
+#!/bin/bash
+# Jenkins Installation on CentOS Stream 9
+
+# Step 1: Update system
+sudo dnf update -y
+
+# Step 2: Enable required repositories
+sudo dnf install -y wget curl git
+
+# Step 3: Install Java 17 (Temurin JDK)
+wget -O /etc/yum.repos.d/adoptium.repo https://packages.adoptium.net/artifactory/rpm/centos/adoptium.repo
+sudo dnf install -y temurin-17-jdk
+java -version
+
+# Step 4: Add Jenkins repo and key
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+
+# Step 5: Install Jenkins
+sudo dnf install -y jenkins
+
+# Step 6: Enable and start Jenkins service
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+sudo systemctl status jenkins
+
+# Step 7: Verify Jenkins CLI version
+jenkins --version
+
+Notes:
+
+# Jenkins runs on port 8080 by default.
+# 👉 You may need to allow it in firewalld:
+sudo firewall-cmd --permanent --add-port=8080/tcp
+sudo firewall-cmd --reload
+# To get the initial admin password:
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+# Access Jenkins in your browser:
+http://<your_server_ip>:8080
+
+# Docker installation script for CentOS Stream 9
+#!/bin/bash
+# Docker Installation on CentOS Stream 9 / RHEL 9
+
+# Step 1: Update system
+sudo dnf update -y
+
+# Step 2: Remove any old versions
+sudo dnf remove -y docker \
+                  docker-client \
+                  docker-client-latest \
+                  docker-common \
+                  docker-latest \
+                  docker-latest-logrotate \
+                  docker-logrotate \
+                  docker-engine
+
+# Step 3: Install required packages
+sudo dnf install -y dnf-plugins-core curl
+
+# Step 4: Add Docker’s official repo
+sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+# Step 5: Install Docker Engine, CLI, Containerd, Buildx, Compose
+sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Step 6: Start and enable Docker service
+sudo systemctl enable --now docker
+
+# Step 7: Add user to docker group (replace with your username if not "rakesh" or "centos")
+sudo usermod -aG docker $USER
+
+# Step 8: Fix socket permission (optional, but not recommended for production)
+sudo chmod 666 /var/run/docker.sock
+
+# Step 9: Verify installation
+docker --version
+
+# Trivy Installation on CentOS Stream 9 / RHEL 9
+#!/bin/bash
+# Step 1: Update system
+sudo dnf update -y
+
+# Step 2: Install required tools
+sudo dnf install -y wget curl gnupg
+
+# Step 3: Add Trivy repo and GPG key
+sudo rpm --import https://aquasecurity.github.io/trivy-repo/rpm/public.key
+sudo wget -O /etc/yum.repos.d/trivy.repo https://aquasecurity.github.io/trivy-repo/rpm/releases.repo
+
+# Step 4: Install Trivy
+sudo dnf install -y trivy
+
+# Step 5: Verify Trivy installation
+trivy --version
+
+
+
+
+
+
+# install Docker Scout
+
+#!/bin/bash
+# Docker Scout Installation on CentOS Stream 9 / RHEL 9
+
+# Step 1: Update system
+sudo dnf update -y
+sudo dnf install -y curl wget jq
+
+# Step 2: Install Docker Scout using official script
+curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
+# (Optional: review the script before running)
+sh install-scout.sh
+
+# Step 3: Verify installation
+docker scout --version
+
+# Step 4: Login to Docker Hub (required for Scout features)
+docker login
+
+# SonarQube installation using Docker on CentOS 9
+#!/bin/bash
+# SonarQube Installation with Docker on CentOS 9
+
+# Step 1: Make sure Docker is installed and running
+docker --version || { echo "Docker is not installed. Please install Docker first."; exit 1; }
+
+# Step 2: Run SonarQube (Community LTS edition)
+docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
+
+# Step 3: Verify SonarQube container is running
+docker ps
+
+# Step 4: Check logs (optional, helps in debugging startup issues)
+docker logs -f sonar
+
+Access SonarQube
+
+Open a browser and go to:
+👉 http://<your_server_ip>:9000
+
+Default credentials:
+
+Username: admin
+Password: admin
+
+
+
+
